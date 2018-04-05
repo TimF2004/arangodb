@@ -1,8 +1,8 @@
+
 ////////////////////////////////////////////////////////////////////////////////
 /// DISCLAIMER
 ///
-/// Copyright 2014-2016 ArangoDB GmbH, Cologne, Germany
-/// Copyright 2004-2014 triAGENS GmbH, Cologne, Germany
+/// Copyright 2014-2018 ArangoDB GmbH, Cologne, Germany
 ///
 /// Licensed under the Apache License, Version 2.0 (the "License");
 /// you may not use this file except in compliance with the License.
@@ -18,45 +18,20 @@
 ///
 /// Copyright holder is ArangoDB GmbH, Cologne, Germany
 ///
-/// @author Jan Steemann
+/// @author Jan Christoph Uhde
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef ARANGODB_BASICS_SSL__HELPER_H
-#define ARANGODB_BASICS_SSL__HELPER_H 1
+#ifndef ARANGODB_SSL_SSL_FIX_H
+#define ARANGODB_SSL_SSL_FIX_H 1
 
-#include "Basics/Common.h"
-#include "ssl-fix.h"
-#include <openssl/err.h>
-#include <openssl/ssl.h>
-#include <boost/asio/ssl.hpp>
-
-#include "Basics/asio-helper.h"
-
-namespace arangodb {
-// SSL protocol methods
-enum SslProtocol {
-  SSL_UNKNOWN = 0,
-  SSL_V2 = 1,
-  SSL_V23 = 2,
-  SSL_V3 = 3,
-  TLS_V1 = 4,
-  TLS_V12 = 5,
-
-  SSL_LAST
-};
-
-#if (OPENSSL_VERSION_NUMBER < 0x00999999L)
-#define SSL_CONST /* */
-#else
-#define SSL_CONST const
+#ifdef _WIN32
+  #ifdef U_STATIC_IMPLEMENTATION
+    #include <windows.h>
+    // https://stackoverflow.com/questions/30450042/unresolved-external-symbol-imp-iob-func-referenced-in-function-openssldie/33830712#33830712
+    // FIX for openssl lib that searches for deprecated symbols
+    FILE _iob[] = { *stdin, *stdout, *stderr };
+    extern "C" FILE * __cdecl __iob_func(void) { return _iob; }
+  #endif
 #endif
-
-boost::asio::ssl::context sslContext(
-    SslProtocol, std::string const& keyfile);
-
-std::string protocolName(SslProtocol protocol);
-
-std::string lastSSLError();
-}
 
 #endif

@@ -25,7 +25,6 @@
 #define ARANGODB_BASICS_COMMON_H 1
 
 #ifdef _WIN32
-
 #ifndef WIN32_LEAN_AND_MEAN
 #define WIN32_LEAN_AND_MEAN 1
 #endif
@@ -178,7 +177,7 @@ typedef long suseconds_t;
 #undef TRI_WITHIN_COMMON
 
 #ifdef _WIN32
-// some Windows headers define macros named free and small, 
+// some Windows headers define macros named free and small,
 // leading to follow-up compile errors
 #undef free
 #undef small
